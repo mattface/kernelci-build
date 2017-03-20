@@ -49,13 +49,13 @@ if [[ BUILDS_FINISHED -eq 2 ]]; then
     echo "All builds have now finished, triggering testing..."
     # Tell the dashboard the job has finished build.
     echo "Build has now finished, reporting result to dashboard."
-    curl -X POST -H "Authorization: $EMAIL_AUTH_TOKEN" -H "Content-Type: application/json" -d '{"job": "'$TREE_NAME'", "kernel": "'$GIT_DESCRIBE'", "git_branch": "'$BRANCH'"}' https://api.kernelci.org/job
+    curl -X POST -H "Authorization: $EMAIL_AUTH_TOKEN" -H "Content-Type: application/json" -d '{"job": "'$TREE_NAME'", "kernel": "'$GIT_DESCRIBE'", "git_branch": "'$BRANCH'"}' https://staging-api.kernelci.org/job
     if [ $EMAIL != true ]; then
         echo "Not sending emails because EMAIL was false"
         exit 0
     fi
     # we are staging to just send to myself
-    curl -X POST -H "Authorization: $EMAIL_AUTH_TOKEN" -H "Content-Type: application/json" -d '{"job": "'$TREE_NAME'", "kernel": "'$GIT_DESCRIBE'", "git_branch": "'$BRANCH'", "build_report": 1, "send_to": ["milo.casagrande@linaro.org", "matt@mattface.org"], "format": ["txt", "html"], "delay": 10}' https://api.kernelci.org/send
+    curl -X POST -H "Authorization: $EMAIL_AUTH_TOKEN" -H "Content-Type: application/json" -d '{"job": "'$TREE_NAME'", "kernel": "'$GIT_DESCRIBE'", "git_branch": "'$BRANCH'", "build_report": 1, "send_to": ["milo.casagrande@linaro.org", "matt@mattface.org"], "format": ["txt", "html"], "delay": 10}' https://staging-api.kernelci.org/send
     # if [ "$TREE_NAME" == "arm-soc" ] || [ "$TREE_NAME" == "mainline" ] || [ "$TREE_NAME" == "stable" ] || [ "$TREE_NAME" == "rmk" ] || [ "$TREE_NAME" == "tegra" ]; then
     #     # Public Mailing List
     #     echo "Sending results pubic mailing list"
