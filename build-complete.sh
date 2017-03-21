@@ -33,29 +33,30 @@ if [[ -z $EMAIL_AUTH_TOKEN ]]; then
   exit 1
 fi
 
+if [[ -z $API_URL ]]; then
+  echo "API_URL not set.  Not publishing."
+  exit 1
+fi
+
 echo "ARCH=${ARCH},TREE_NAME=${TREE_NAME},BRANCH=${BRANCH},GIT_DESCRIBE=${GIT_DESCRIBE},BUILD_NUMBER=${BUILD_NUMBER}" >> /tmp/build-complete.log
 BASEDIR=/var/www/images/kernel-ci/$TREE_NAME/$BRANCH/$GIT_DESCRIBE
 
-# Sanity prevails, do the copy
-for arch in ${ARCH}; do
-    sudo touch ${BASEDIR}/$arch.done
-    #sudo find ${BASEDIR} -type f -path "*/$arch-*" -fprint ${BASEDIR}/$arch.filelist
-done
+sudo touch ${BASEDIR}/${ARCH}.done
 
 # Check if all builds for all architectures have finished. The magic number here is 4 (arm, arm64, x86, mips64)
 # This magic number will need to be changed if new architectures are added.
 export BUILDS_FINISHED=$(ls ${BASEDIR}/ | grep .done | wc -l)
-if [[ BUILDS_FINISHED -eq 2 ]]; then
+if [[ BUILDS_FINISHED -eq 4 ]]; then
     echo "All builds have now finished, triggering testing..."
     # Tell the dashboard the job has finished build.
     echo "Build has now finished, reporting result to dashboard."
-    curl -X POST -H "Authorization: $EMAIL_AUTH_TOKEN" -H "Content-Type: application/json" -d '{"job": "'$TREE_NAME'", "kernel": "'$GIT_DESCRIBE'", "git_branch": "'$BRANCH'"}' https://staging-api.kernelci.org/job
+    curl -X POST -H "Authorization: $EMAIL_AUTH_TOKEN" -H "Content-Type: application/json" -d '{"job": "'$TREE_NAME'", "kernel": "'$GIT_DESCRIBE'", "git_branch": "'$BRANCH'"}' ${API_URL}/job
     if [ $EMAIL != true ]; then
         echo "Not sending emails because EMAIL was false"
         exit 0
     fi
     # we are staging to just send to myself
-    curl -X POST -H "Authorization: $EMAIL_AUTH_TOKEN" -H "Content-Type: application/json" -d '{"job": "'$TREE_NAME'", "kernel": "'$GIT_DESCRIBE'", "git_branch": "'$BRANCH'", "build_report": 1, "send_to": ["milo.casagrande@linaro.org", "matt@mattface.org"], "format": ["txt", "html"], "delay": 10}' https://staging-api.kernelci.org/send
+    curl -X POST -H "Authorization: $EMAIL_AUTH_TOKEN" -H "Content-Type: application/json" -d '{"job": "'$TREE_NAME'", "kernel": "'$GIT_DESCRIBE'", "git_branch": "'$BRANCH'", "build_report": 1, "send_to": ["milo.casagrande@linaro.org", "matt@mattface.org", "tyler.baker@linaro.org"], "format": ["txt", "html"], "delay": 10}' ${API_URL}/send
     # if [ "$TREE_NAME" == "arm-soc" ] || [ "$TREE_NAME" == "mainline" ] || [ "$TREE_NAME" == "stable" ] || [ "$TREE_NAME" == "rmk" ] || [ "$TREE_NAME" == "tegra" ]; then
     #     # Public Mailing List
     #     echo "Sending results pubic mailing list"
