@@ -57,6 +57,7 @@ if [[ BUILDS_FINISHED -eq 4 ]]; then
     fi
     # we are staging to just send to myself
     curl -X POST -H "Authorization: $EMAIL_AUTH_TOKEN" -H "Content-Type: application/json" -d '{"job": "'$TREE_NAME'", "kernel": "'$GIT_DESCRIBE'", "git_branch": "'$BRANCH'", "build_report": 1, "send_to": ["milo.casagrande@linaro.org", "matt@mattface.org", "tyler.baker@linaro.org"], "format": ["txt", "html"], "delay": 10}' ${API_URL}/send
+    curl -X POST -H "Authorization: $EMAIL_AUTH_TOKEN" -H "Content-Type: application/json" -d '{"job": "'$TREE_NAME'", "kernel": "'$GIT_DESCRIBE'", "git_branch": "'$BRANCH'", "boot_report": 1, "send_to": ["milo.casagrande@linaro.org", "matt@mattface.org", "tyler.baker@linaro.org"], "format": ["txt", "html"], "delay": 12600}' ${API_URL}/send
     # if [ "$TREE_NAME" == "arm-soc" ] || [ "$TREE_NAME" == "mainline" ] || [ "$TREE_NAME" == "stable" ] || [ "$TREE_NAME" == "rmk" ] || [ "$TREE_NAME" == "tegra" ]; then
     #     # Public Mailing List
     #     echo "Sending results pubic mailing list"
