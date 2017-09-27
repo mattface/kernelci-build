@@ -8,6 +8,7 @@ echo "Creating defconfigs ${TREE} (${TREE_NAME}/${BRANCH}/${GIT_DESCRIBE}) for a
 if [ ! -z $LOCAL_TARBALL ]
 then
   echo "Using local tarball"
+  cp ${LOCAL_TARBALL} .
 else
   wget_retry.sh ${SRC_TARBALL}
 fi
