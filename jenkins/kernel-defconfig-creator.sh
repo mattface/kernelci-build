@@ -4,13 +4,14 @@ set -x
 export PATH=${WORKSPACE}/kernelci-build:${PATH}
 
 echo "Creating defconfigs ${TREE} (${TREE_NAME}/${BRANCH}/${GIT_DESCRIBE}) for arch ${ARCH}"
-if [ -n $LOCAL_TARBALL ]
+
+if [ ! -z $LOCAL_TARBALL ]
 then
   echo "Using local tarball"
-  cp $LOCAL_TARBALL linux-src.tar.gz
 else
   wget_retry.sh ${SRC_TARBALL}
 fi
+
 if [ $? != 0 ]
 then
     echo "Couldnt fetch the source tarball"

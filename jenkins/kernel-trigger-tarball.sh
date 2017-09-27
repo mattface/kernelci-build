@@ -3,6 +3,8 @@
 set -x
 
 rm -f ${WORKSPACE}/*.properties
+rm -f ${WORKSPACE}/linux-src.tar.gz
+rm -f ${WORKSPACE}/last.commit
 
 if [ -z $STORAGE ]; then
   echo "STORAGE not set, exiting"
@@ -187,9 +189,6 @@ if [ $? != 0 ]; then
   rm last.commit
   exit 1
 fi
-
-rm last.commit
-rm linux-src.tar.gz
 
 
 cat << EOF > ${WORKSPACE}/${TREE_BRANCH}-build.properties
